@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 // PROVIDED CODE BELOW (LINES 1 - 80) DO NOT REMOVE
 
 // The store will hold all information needed globally
@@ -78,7 +80,10 @@ async function handleCreateRace() {
 	renderAt('#race', renderRaceStartView())
 
 	// TODO - Get player_id and track_id from the store
-	
+	await fetch('http://localhost:8000/api/races')
+		.then(response => console.log(response))
+		.catch(error => console.log(error));
+
 	// const race = TODO - invoke the API call to create the race, then save the result
 
 	// TODO - update the store with the race id
