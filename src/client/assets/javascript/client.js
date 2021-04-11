@@ -49,7 +49,7 @@ function setupClickHandlers() {
 		// Submit create race form
 		if (target.matches('#submit-create-race')) {
 			event.preventDefault()
-	
+			console.log('Debug: Create race has been triggered.');
 			// start race
 			handleCreateRace()
 		}
@@ -75,12 +75,14 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
 	// render starting UI
-	renderAt('#race', renderRaceStartView())
+	renderAt('#race', renderRaceStartView(store.track_id))
 
 	// TODO - Get player_id and track_id from the store
-	fetch('http://example.com/movies.json')
+	const race = await fetch(`${SERVER}/api/races`)
 		.then(response => response.json())
 		.then(data => console.log(data));
+
+	console.log(race);
 
 	// const race = TODO - invoke the API call to create the race, then save the result
 
@@ -163,7 +165,7 @@ function handleSelectTrack(target) {
 	target.classList.add('selected')
 
 	// TODO - save the selected track id to the store
-	
+	store.track_id = target.id;
 }
 
 function handleAccelerate() {
@@ -185,7 +187,7 @@ function renderRacerCars(racers) {
 
 	return `
 		<ul id="racers">
-			${reuslts}
+			${results}
 		</ul>
 	`
 }

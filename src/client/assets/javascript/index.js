@@ -10840,7 +10840,8 @@ function setupClickHandlers() {
 
 
     if (target.matches('#submit-create-race')) {
-      event.preventDefault(); // start race
+      event.preventDefault();
+      console.log('Debug: Create race has been triggered.'); // start race
 
       handleCreateRace();
     } // Handle acceleration click
@@ -10895,25 +10896,31 @@ function handleCreateRace() {
 
 function _handleCreateRace() {
   _handleCreateRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+    var race;
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             // render starting UI
-            renderAt('#race', renderRaceStartView()); // TODO - Get player_id and track_id from the store
+            renderAt('#race', renderRaceStartView(store.track_id)); // TODO - Get player_id and track_id from the store
 
-            fetch('http://example.com/movies.json').then(function (response) {
+            _context3.next = 3;
+            return fetch("".concat(SERVER, "/api/races")).then(function (response) {
               return response.json();
             }).then(function (data) {
               return console.log(data);
-            }); // const race = TODO - invoke the API call to create the race, then save the result
+            });
+
+          case 3:
+            race = _context3.sent;
+            console.log(race); // const race = TODO - invoke the API call to create the race, then save the result
             // TODO - update the store with the race id
             // The race has been created, now start the countdown
             // TODO - call the async function runCountdown
             // TODO - call the async function startRace
             // TODO - call the async function runRace
 
-          case 2:
+          case 5:
           case "end":
             return _context3.stop();
         }
@@ -11002,6 +11009,8 @@ function handleSelectTrack(target) {
 
 
   target.classList.add('selected'); // TODO - save the selected track id to the store
+
+  store.track_id = target.id;
 }
 
 function handleAccelerate() {
@@ -11016,7 +11025,7 @@ function renderRacerCars(racers) {
   }
 
   var results = racers.map(renderRacerCard).join('');
-  return "\n\t\t<ul id=\"racers\">\n\t\t\t".concat(reuslts, "\n\t\t</ul>\n\t");
+  return "\n\t\t<ul id=\"racers\">\n\t\t\t".concat(results, "\n\t\t</ul>\n\t");
 }
 
 function renderRacerCard(racer) {
