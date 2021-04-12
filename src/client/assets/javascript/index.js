@@ -10896,19 +10896,20 @@ function handleCreateRace() {
 
 function _handleCreateRace() {
   _handleCreateRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-    var player_id, race;
+    var player_id, raceData, race;
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            // render starting UI
-            renderAt('#race', renderRaceStartView(store.track_id)); // TODO - Get player_id and track_id from the store
-
+            // TODO - Get player_id and track_id from the store
             player_id = store.player_id;
-            track_id = store.track_id;
-            console.log(race); // const race = TODO - invoke the API call to create the race, then save the result
+            raceData = {
+              "track": store.track_id,
+              "player_id": player_id
+            }; // const race = TODO - invoke the API call to create the race, then save the result
 
-            race = fetch("".concat(SERVER, "/api/races"), {
+            _context3.next = 4;
+            return fetch("".concat(SERVER, "/api/races"), {
               method: 'POST',
               // Other options: PUT, PATCH, DELETE
               mode: 'cors',
@@ -10916,22 +10917,36 @@ function _handleCreateRace() {
               headers: {
                 'Content-Type': 'application/json'
               },
-              body: {
-                "track": track_id,
-                "player_id": player_id
-              } // body data type must match "Content-Type" header
+              body: JSON.stringify(raceData) // body data type must match "Content-Type" header
 
             }).then(function (response) {
               return response.json();
             }).catch(function (error) {
               return console.log(error);
-            }); // TODO - update the store with the race id
-            // The race has been created, now start the countdown
-            // TODO - call the async function runCountdown
-            // TODO - call the async function startRace
-            // TODO - call the async function runRace
+            });
 
-          case 5:
+          case 4:
+            race = _context3.sent;
+            console.log(race);
+            console.log(race.ID); // TODO - update the store with the race id
+
+            store.race_id = race.ID; // render starting UI
+
+            renderAt('#race', renderRaceStartView(store.track_id)); // The race has been created, now start the countdown
+            // TODO - call the async function runCountdown
+
+            _context3.next = 11;
+            return runCountdown();
+
+          case 11:
+            _context3.next = 13;
+            return startRace(race.ID);
+
+          case 13:
+            _context3.next = 15;
+            return runRace(race.ID);
+
+          case 15:
           case "end":
             return _context3.stop();
         }
@@ -10977,8 +10992,21 @@ function _runCountdown() {
             timer = 3;
             return _context4.abrupt("return", new Promise(function (resolve) {
               // TODO - use Javascript's built in setInterval method to count down once per second
-              // run this DOM manipulation to decrement the countdown for the user
-              document.getElementById('big-numbers').innerHTML = --timer; // TODO - if the countdown is done, clear the interval, resolve the promise, and return
+              var countDown = function countDown() {
+                // run this DOM manipulation to decrement the countdown for the user
+                document.getElementById('big-numbers').innerHTML = --timer;
+
+                if (timer >= 0) {
+                  --timer;
+                }
+
+                if (timer === 0) {
+                  clearInterval(countDown);
+                  return resolve();
+                }
+              };
+
+              setInterval(countDown, 1000); // TODO - if the countdown is done, clear the interval, resolve the promise, and return
             }));
 
           case 7:
@@ -11008,7 +11036,7 @@ function handleSelectPodRacer(target) {
 
   target.classList.add('selected'); // [DONE] TODO - save the selected racer to the store
 
-  store.race_id = target_id;
+  store.race_id = target.id;
 }
 
 function handleSelectTrack(target) {
@@ -11028,6 +11056,24 @@ function handleSelectTrack(target) {
 
 function handleAccelerate() {
   console.log("accelerate button clicked"); // TODO - Invoke the API call to accelerate
+
+  var raceData = {}; // const race = TODO - invoke the API call to create the race, then save the result
+
+  fetch("".concat(SERVER, "/api/races/").concat(store.race_id, "/accelerate"), {
+    method: 'POST',
+    // Other options: PUT, PATCH, DELETE
+    mode: 'cors',
+    // Other options are: 'no-cors', 'same-origin', and the default: 'cors'
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(raceData) // body data type must match "Content-Type" header
+
+  }).then(function (response) {
+    return response.json();
+  }).catch(function (error) {
+    return console.log(error);
+  });
 } // HTML VIEWS ------------------------------------------------
 // Provided code - do not remove
 
