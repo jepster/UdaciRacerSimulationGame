@@ -78,13 +78,25 @@ async function handleCreateRace() {
 	renderAt('#race', renderRaceStartView(store.track_id))
 
 	// TODO - Get player_id and track_id from the store
-	const race = await fetch(`${SERVER}/api/races`)
-		.then(response => response.json())
-		.then(data => console.log(data));
+	const player_id = store.player_id
+		track_id = store.track_id;
 
 	console.log(race);
 
 	// const race = TODO - invoke the API call to create the race, then save the result
+	const race = fetch(`${SERVER}/api/races`, {
+		method: 'POST', // Other options: PUT, PATCH, DELETE
+		mode: 'cors', // Other options are: 'no-cors', 'same-origin', and the default: 'cors'
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: {
+			"track": track_id,
+			"player_id": player_id
+		} // body data type must match "Content-Type" header
+	})
+		.then(response => response.json())
+		.catch(error => console.log(error))
 
 	// TODO - update the store with the race id
 
@@ -149,7 +161,8 @@ function handleSelectPodRacer(target) {
 	// add class selected to current target
 	target.classList.add('selected')
 
-	// TODO - save the selected racer to the store
+	// [DONE] TODO - save the selected racer to the store
+	store.race_id = target_id;
 }
 
 function handleSelectTrack(target) {
@@ -164,7 +177,7 @@ function handleSelectTrack(target) {
 	// add class selected to current target
 	target.classList.add('selected')
 
-	// TODO - save the selected track id to the store
+	// [DONE] TODO - save the selected track id to the store
 	store.track_id = target.id;
 }
 

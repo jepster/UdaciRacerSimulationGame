@@ -10896,7 +10896,7 @@ function handleCreateRace() {
 
 function _handleCreateRace() {
   _handleCreateRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
-    var race;
+    var player_id, race;
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
@@ -10904,17 +10904,28 @@ function _handleCreateRace() {
             // render starting UI
             renderAt('#race', renderRaceStartView(store.track_id)); // TODO - Get player_id and track_id from the store
 
-            _context3.next = 3;
-            return fetch("".concat(SERVER, "/api/races")).then(function (response) {
-              return response.json();
-            }).then(function (data) {
-              return console.log(data);
-            });
-
-          case 3:
-            race = _context3.sent;
+            player_id = store.player_id;
+            track_id = store.track_id;
             console.log(race); // const race = TODO - invoke the API call to create the race, then save the result
-            // TODO - update the store with the race id
+
+            race = fetch("".concat(SERVER, "/api/races"), {
+              method: 'POST',
+              // Other options: PUT, PATCH, DELETE
+              mode: 'cors',
+              // Other options are: 'no-cors', 'same-origin', and the default: 'cors'
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: {
+                "track": track_id,
+                "player_id": player_id
+              } // body data type must match "Content-Type" header
+
+            }).then(function (response) {
+              return response.json();
+            }).catch(function (error) {
+              return console.log(error);
+            }); // TODO - update the store with the race id
             // The race has been created, now start the countdown
             // TODO - call the async function runCountdown
             // TODO - call the async function startRace
@@ -10995,7 +11006,9 @@ function handleSelectPodRacer(target) {
   } // add class selected to current target
 
 
-  target.classList.add('selected'); // TODO - save the selected racer to the store
+  target.classList.add('selected'); // [DONE] TODO - save the selected racer to the store
+
+  store.race_id = target_id;
 }
 
 function handleSelectTrack(target) {
@@ -11008,7 +11021,7 @@ function handleSelectTrack(target) {
   } // add class selected to current target
 
 
-  target.classList.add('selected'); // TODO - save the selected track id to the store
+  target.classList.add('selected'); // [DONE] TODO - save the selected track id to the store
 
   store.track_id = target.id;
 }
