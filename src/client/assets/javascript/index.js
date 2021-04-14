@@ -10991,7 +10991,7 @@ function _runCountdown() {
           case 3:
             timer = 3;
             return _context4.abrupt("return", new Promise(function (resolve) {
-              // TODO - use Javascript's built in setInterval method to count down once per second
+              // Done TODO - use Javascript's built in setInterval method to count down once per second
               var countDown = function countDown() {
                 // run this DOM manipulation to decrement the countdown for the user
                 document.getElementById('big-numbers').innerHTML = --timer;
@@ -11000,13 +11000,13 @@ function _runCountdown() {
                   --timer;
                 }
 
-                if (timer === 0) {
-                  clearInterval(countDown);
+                if (timer <= 0) {
+                  clearInterval(countDownInterval);
                   return resolve();
                 }
               };
 
-              setInterval(countDown, 1000); // TODO - if the countdown is done, clear the interval, resolve the promise, and return
+              var countDownInterval = setInterval(countDown, 1000); // Done TODO - if the countdown is done, clear the interval, resolve the promise, and return
             }));
 
           case 7:
