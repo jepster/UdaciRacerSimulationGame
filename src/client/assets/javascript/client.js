@@ -428,10 +428,15 @@ function getRace(id) {
 async function startRace(id) {
 	console.log('Starting race!');
 	await fetch(`${SERVER}/api/races/${id}/start`, {
-		method: 'POST',
-		...defaultFetchOpts(),
+		method: 'POST', // Other options: PUT, PATCH, DELETE
+		mode: 'cors', // Other options are: 'no-cors', 'same-origin', and the default: 'cors'
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(raceData) // body data type must match "Content-Type" header
 	})
-	.catch(err => console.log("Problem with startRace request::", err))
+		.then(response => response.json())
+		.catch(error => console.log("Problem with startRace request::", err))
 
 	console.log('Debug after start race!');
 

@@ -11272,9 +11272,19 @@ function _startRace() {
           case 0:
             console.log('Starting race!');
             _context7.next = 3;
-            return fetch("".concat(SERVER, "/api/races/").concat(id, "/start"), _objectSpread({
-              method: 'POST'
-            }, defaultFetchOpts())).catch(function (err) {
+            return fetch("".concat(SERVER, "/api/races/").concat(id, "/start"), {
+              method: 'POST',
+              // Other options: PUT, PATCH, DELETE
+              mode: 'cors',
+              // Other options are: 'no-cors', 'same-origin', and the default: 'cors'
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(raceData) // body data type must match "Content-Type" header
+
+            }).then(function (response) {
+              return response.json();
+            }).catch(function (error) {
               return console.log("Problem with startRace request::", err);
             });
 
