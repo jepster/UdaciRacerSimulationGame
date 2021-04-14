@@ -99,6 +99,7 @@ async function handleCreateRace() {
 
 	// TODO - update the store with the race id
 	store.race_id = race.ID;
+	store.player_id = race.PlayerID;
 
 	// render starting UI
 	renderAt('#race', renderRaceStartView(store.track_id))
@@ -108,31 +109,55 @@ async function handleCreateRace() {
 	await runCountdown();
 
 	// TODO - call the async function startRace
-	await startRace(race.ID);
+	console.log('Running startRace() function');
+	await startRace(store.race_id);
 
 	// TODO - call the async function runRace
-	await runRace(race.ID);
+	console.log('Running runRace() function');
+	await runRace(store.race_id);
 }
 
 function runRace(raceID) {
-	return new Promise(resolve => {
-	// TODO - use Javascript's built in setInterval method to get race info every 500ms
+	try {
+		let infoSingleRace = {};
 
-	/* 
-		TODO - if the race info status property is "in-progress", update the leaderboard by calling:
+			// TODO - use Javascript's built in setInterval method to get race info every 500ms
+			const raceInfo = async () => {
+				const raceData = {
+					"track": store.track_id,
+					"player_id": store.player_id
+				};
 
-		renderAt('#leaderBoard', raceProgress(res.positions))
-	*/
+				console.log('DEBUG - Regular race info: ');
+				const infoSingleRace = await fetch(`${SERVER}/api/races/${raceID}`)
+					.then(response => response.json())
+					.catch(error => console.log(error));
 
-	/* 
-		TODO - if the race info status property is "finished", run the following:
+				console.log('The race info: ');
+				console.log(infoSingleRace);
 
-		clearInterval(raceInterval) // to stop the interval from repeating
-		renderAt('#race', resultsView(res.positions)) // to render the results view
-		reslove(res) // resolve the promise
-	*/
-	})
-	// remember to add error handling for the Promise
+				// TODO - if the race info status property is "in-progress", update the leaderboard by calling:
+				if (infoSingleRace.Results.status === 'in-progress') {
+					renderAt('#leaderBoard', raceProgress(infoSingleRace.positions))
+				}
+
+				if (infoSingleRace.Results.status === 'finished') {
+					renderAt('#race', resultsView(infoSingleRace.positions)) // to render the results view
+				}
+			}
+
+			const raceInterval = setInterval(raceInfo, 500);
+
+			// TODO - if the race info status property is "finished", run the following:
+			if (infoSingleRace.Results.status === 'finished') {
+				clearInterval(raceInterval); // to stop the interval from repeating
+			}
+
+			resolve(infoSingleRace); // resolve the promise
+		// remember to add error handling for the Promise
+	} catch(error) {
+		console.log(error);
+	}
 }
 
 async function runCountdown() {
@@ -202,24 +227,15 @@ function handleSelectTrack(target) {
 	store.track_id = target.id;
 }
 
-function handleAccelerate() {
+async function handleAccelerate() {
 	console.log("accelerate button clicked")
 	// TODO - Invoke the API call to accelerate
 
-	const raceData = {
-	};
-
-	// const race = TODO - invoke the API call to create the race, then save the result
 	fetch(`${SERVER}/api/races/${store.race_id}/accelerate`, {
-		method: 'POST', // Other options: PUT, PATCH, DELETE
-		mode: 'cors', // Other options are: 'no-cors', 'same-origin', and the default: 'cors'
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(raceData) // body data type must match "Content-Type" header
+		method: 'POST',
+		...defaultFetchOpts(),
 	})
-		.then(response => response.json())
-		.catch(error => console.log(error))
+		.catch(err => console.log("Problem with accelerate request::", err))
 }
 
 // HTML VIEWS ------------------------------------------------
@@ -308,6 +324,9 @@ function renderRaceStartView(track, racers) {
 }
 
 function resultsView(positions) {
+	console.log('Positions:');
+	console.log(positions);
+
 	positions.sort((a, b) => (a.final_position > b.final_position) ? 1 : -1)
 
 	return `
@@ -366,7 +385,7 @@ function defaultFetchOpts() {
 		mode: 'cors',
 		headers: {
 			'Content-Type': 'application/json',
-			'Access-Control-Allow-Origin' : SERVER,
+			'Access-Control-Allow-Origin': SERVER,
 		},
 	}
 }
@@ -406,13 +425,27 @@ function getRace(id) {
 	// GET request to `${SERVER}/api/races/${id}`
 }
 
-function startRace(id) {
-	return fetch(`${SERVER}/api/races/${id}/start`, {
+async function startRace(id) {
+	console.log('Starting race!');
+	await fetch(`${SERVER}/api/races/${id}/start`, {
 		method: 'POST',
 		...defaultFetchOpts(),
 	})
-	.then(res => res.json())
-	.catch(err => console.log("Problem with getRace request::", err))
+	.catch(err => console.log("Problem with startRace request::", err))
+
+	console.log('Debug after start race!');
+
+	const raceData = {
+		"track": store.track_id,
+		"player_id": store.player_id
+	};
+
+	const race = await fetch(`${SERVER}/api/races/${id}`)
+		.then(response => response.json())
+		.catch(error => console.log(error))
+
+	console.log(race);
+	console.log(id);
 }
 
 function accelerate(id) {

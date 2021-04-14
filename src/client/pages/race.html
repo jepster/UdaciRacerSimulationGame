@@ -24,15 +24,6 @@
             <h2>Get Started</h2>
             <h3>Create Your Race</h3>
             <form id="create-race">
-                <h3>Choose your track</h3>
-                <ul class="cards-list" id="tracks">
-                    <!-- filled via js -->
-                </ul>
-                <label for="course" class="sr-only">Race Course:</label>
-                <select id="course" name="course" class="required sr-only">
-                    <option value="trackname" id="trackname">test</option>
-                </select>
-
                 <h3>Choose your racer</h3>
                 <ul class="cards-list" id="racers">
                     <!-- filled via js -->
@@ -41,7 +32,20 @@
                 <select id="podRacer" name="podRacer" class="required sr-only">
                     <option value="test5">test</option>
                 </select>
+
+                <div id ="track-selection">
+                    <h3>Choose your track</h3>
+                    <ul class="cards-list" id="tracks">
+                        <!-- filled via js -->
+                    </ul>
+                    <label for="course" class="sr-only">Race Course:</label>
+                    <select id="course" name="course" class="required sr-only">
+                        <option value="trackname" id="trackname">test</option>
+                    </select>
+                </div>
+
                 <button class="button" type="submit" id="submit-create-race">Start Race</button>
+
             </form>
         </section>
     </main>
