@@ -75,33 +75,10 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
 	// TODO - Get player_id and track_id from the store
-	const player_id = store.player_id;
-	const track_id = store.track_id;
 
-	const raceData = {
-		"track": store.track_id,
-		"player_id": store.player_id
-	};
-
-	// const race = TODO - invoke the API call to create the race, then save the result
-	const body = { player_id, track_id };
-	await fetch(`${SERVER}/api/races`, {
-		method: "POST",
-		...defaultFetchOpts(),
-		dataType: "jsonp",
-		body: JSON.stringify(body),
-	})
-		.then((res) => res.json())
-		.then((res) => {
-			console.log('Race response in then branch:');
-			console.log(res);
-			store.race_id = res.ID; //here to store the race_id that we get from the API
-			store.player_id = res.PlayerID;
-		})
-		.catch((err) => console.log("Problem with createRace request::", err));
-
+	//TODO - invoke the API call to create the race, then save the result
 	// TODO - update the store with the race id
-
+	await createRace(store.player_id, store.track_id);
 
 	// render starting UI
 	renderAt('#race', renderRaceStartView(store.track_id))
@@ -408,19 +385,26 @@ function getRacers() {
 		.catch(error => console.log(error))
 }
 
-function createRace(player_id, track_id) {
+async function createRace(player_id, track_id) {
 	player_id = parseInt(player_id)
 	track_id = parseInt(track_id)
 	const body = { player_id, track_id }
-	
-	return fetch(`${SERVER}/api/races`, {
-		method: 'POST',
+
+	await fetch(`${SERVER}/api/races`, {
+		method: "POST",
 		...defaultFetchOpts(),
-		dataType: 'jsonp',
-		body: JSON.stringify(body)
+		dataType: "jsonp",
+		body: JSON.stringify(body),
 	})
-	.then(res => res.json())
-	.catch(err => console.log("Problem with createRace request::", err))
+		.then((res) => res.json())
+		.then((res) => {
+			console.log(`Then response from: ${SERVER}/api/races`);
+			console.log(res);
+			store.race_id = res.ID; //here to store the race_id that we get from the API
+			store.player_id = res.PlayerID;
+			console.log('Finished race creation.');
+		})
+		.catch((err) => console.log("Problem with createRace request::", err));
 }
 
 function getRace(id) {

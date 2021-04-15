@@ -10896,63 +10896,34 @@ function handleCreateRace() {
 
 function _handleCreateRace() {
   _handleCreateRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-    var player_id, track_id, raceData, body;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            // TODO - Get player_id and track_id from the store
-            player_id = store.player_id;
-            track_id = store.track_id;
-            raceData = {
-              "track": store.track_id,
-              "player_id": store.player_id
-            }; // const race = TODO - invoke the API call to create the race, then save the result
+            _context4.next = 2;
+            return createRace(store.player_id, store.track_id);
 
-            body = {
-              player_id: player_id,
-              track_id: track_id
-            };
-            _context4.next = 6;
-            return fetch("".concat(SERVER, "/api/races"), _objectSpread(_objectSpread({
-              method: "POST"
-            }, defaultFetchOpts()), {}, {
-              dataType: "jsonp",
-              body: JSON.stringify(body)
-            })).then(function (res) {
-              return res.json();
-            }).then(function (res) {
-              console.log('Race response in then branch:');
-              console.log(res);
-              store.race_id = res.ID; //here to store the race_id that we get from the API
-
-              store.player_id = res.PlayerID;
-            }).catch(function (err) {
-              return console.log("Problem with createRace request::", err);
-            });
-
-          case 6:
-            // TODO - update the store with the race id
+          case 2:
             // render starting UI
             renderAt('#race', renderRaceStartView(store.track_id)); // The race has been created, now start the countdown
             // TODO - call the async function runCountdown
 
-            _context4.next = 9;
+            _context4.next = 5;
             return runCountdown();
 
-          case 9:
+          case 5:
             // TODO - call the async function startRace
             console.log('Running startRace() function');
-            _context4.next = 12;
+            _context4.next = 8;
             return startRace(store.race_id);
 
-          case 12:
+          case 8:
             // TODO - call the async function runRace
             console.log('Running runRace() function');
-            _context4.next = 15;
+            _context4.next = 11;
             return runRace(store.race_id);
 
-          case 15:
+          case 11:
           case "end":
             return _context4.stop();
         }
@@ -11238,40 +11209,67 @@ function getRacers() {
   });
 }
 
-function createRace(player_id, track_id) {
-  player_id = parseInt(player_id);
-  track_id = parseInt(track_id);
-  var body = {
-    player_id: player_id,
-    track_id: track_id
-  };
-  return fetch("".concat(SERVER, "/api/races"), _objectSpread(_objectSpread({
-    method: 'POST'
-  }, defaultFetchOpts()), {}, {
-    dataType: 'jsonp',
-    body: JSON.stringify(body)
-  })).then(function (res) {
-    return res.json();
-  }).catch(function (err) {
-    return console.log("Problem with createRace request::", err);
-  });
+function createRace(_x2, _x3) {
+  return _createRace.apply(this, arguments);
+}
+
+function _createRace() {
+  _createRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(player_id, track_id) {
+    var body;
+    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            player_id = parseInt(player_id);
+            track_id = parseInt(track_id);
+            body = {
+              player_id: player_id,
+              track_id: track_id
+            };
+            _context7.next = 5;
+            return fetch("".concat(SERVER, "/api/races"), _objectSpread(_objectSpread({
+              method: "POST"
+            }, defaultFetchOpts()), {}, {
+              dataType: "jsonp",
+              body: JSON.stringify(body)
+            })).then(function (res) {
+              return res.json();
+            }).then(function (res) {
+              console.log("Then response from: ".concat(SERVER, "/api/races"));
+              console.log(res);
+              store.race_id = res.ID; //here to store the race_id that we get from the API
+
+              store.player_id = res.PlayerID;
+              console.log('Finished race creation.');
+            }).catch(function (err) {
+              return console.log("Problem with createRace request::", err);
+            });
+
+          case 5:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7);
+  }));
+  return _createRace.apply(this, arguments);
 }
 
 function getRace(id) {// GET request to `${SERVER}/api/races/${id}`
 }
 
-function startRace(_x2) {
+function startRace(_x4) {
   return _startRace.apply(this, arguments);
 }
 
 function _startRace() {
-  _startRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(id) {
-    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+  _startRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(id) {
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context7.prev = _context7.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
             console.log('BEGIN - Starting race!');
-            _context7.next = 3;
+            _context8.next = 3;
             return fetch("".concat(SERVER, "/api/races/").concat(id, "/start"), _objectSpread({
               method: 'POST'
             }, defaultFetchOpts())).catch(function (error) {
@@ -11281,7 +11279,7 @@ function _startRace() {
           case 3:
             console.log('END - Starting race!');
             console.log("BEGIN - ".concat(SERVER, "/api/races/").concat(id));
-            _context7.next = 7;
+            _context8.next = 7;
             return fetch("".concat(SERVER, "/api/races/").concat(id)).then(function (response) {
               console.log("Info for request: ".concat(SERVER, "/api/races/").concat(id));
               console.log(response.json());
@@ -11294,10 +11292,10 @@ function _startRace() {
 
           case 8:
           case "end":
-            return _context7.stop();
+            return _context8.stop();
         }
       }
-    }, _callee7);
+    }, _callee8);
   }));
   return _startRace.apply(this, arguments);
 }
