@@ -400,7 +400,7 @@ async function createRace(player_id, track_id) {
 		.then((res) => {
 			console.log(`Then response from: ${SERVER}/api/races`);
 			console.log(res);
-			store.race_id = res.ID; //here to store the race_id that we get from the API
+			store.race_id = parseInt(res.ID) - 1; //here to store the race_id that we get from the API
 			store.player_id = res.PlayerID;
 			console.log('Finished race creation.');
 		})
