@@ -85,7 +85,7 @@ async function handleCreateRace() {
 
 	// const race = TODO - invoke the API call to create the race, then save the result
 	const body = { player_id, track_id };
-	return fetch(`${SERVER}/api/races`, {
+	await fetch(`${SERVER}/api/races`, {
 		method: "POST",
 		...defaultFetchOpts(),
 		dataType: "jsonp",
@@ -93,16 +93,15 @@ async function handleCreateRace() {
 	})
 		.then((res) => res.json())
 		.then((res) => {
+			console.log('Race response in then branch:');
+			console.log(res);
 			store.race_id = res.ID; //here to store the race_id that we get from the API
+			store.player_id = res.PlayerID;
 		})
 		.catch((err) => console.log("Problem with createRace request::", err));
 
-	console.log(race);
-	console.log(race.ID);
-
 	// TODO - update the store with the race id
-	store.race_id = race.ID;
-	store.player_id = race.PlayerID;
+
 
 	// render starting UI
 	renderAt('#race', renderRaceStartView(store.track_id))
@@ -429,31 +428,25 @@ function getRace(id) {
 }
 
 async function startRace(id) {
-	console.log('Starting race!');
+	console.log('BEGIN - Starting race!');
 	await fetch(`${SERVER}/api/races/${id}/start`, {
-		method: 'POST', // Other options: PUT, PATCH, DELETE
-		mode: 'cors', // Other options are: 'no-cors', 'same-origin', and the default: 'cors'
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(raceData) // body data type must match "Content-Type" header
+		method: 'POST',
+		...defaultFetchOpts(),
 	})
-		.then(response => response.json())
 		.catch(error => console.log("Problem with startRace request::", error))
 
-	console.log('Debug after start race!');
+	console.log('END - Starting race!');
 
-	const raceData = {
-		"track": store.track_id,
-		"player_id": store.player_id
-	};
+	console.log(`BEGIN - ${SERVER}/api/races/${id}`);
+	await fetch(`${SERVER}/api/races/${id}`)
+		.then(response => {
+			console.log(`Info for request: ${SERVER}/api/races/${id}`);
+			console.log(response.json())
 
-	const race = await fetch(`${SERVER}/api/races/${id}`)
-		.then(response => response.json())
+		})
 		.catch(error => console.log(error))
 
-	console.log(race);
-	console.log(id);
+	console.log(`END - ${SERVER}/api/races/${id}`);
 }
 
 function accelerate(id) {

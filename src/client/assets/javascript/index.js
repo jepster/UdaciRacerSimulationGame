@@ -10913,7 +10913,8 @@ function _handleCreateRace() {
               player_id: player_id,
               track_id: track_id
             };
-            return _context4.abrupt("return", fetch("".concat(SERVER, "/api/races"), _objectSpread(_objectSpread({
+            _context4.next = 6;
+            return fetch("".concat(SERVER, "/api/races"), _objectSpread(_objectSpread({
               method: "POST"
             }, defaultFetchOpts()), {}, {
               dataType: "jsonp",
@@ -10921,24 +10922,37 @@ function _handleCreateRace() {
             })).then(function (res) {
               return res.json();
             }).then(function (res) {
+              console.log('Race response in then branch:');
+              console.log(res);
               store.race_id = res.ID; //here to store the race_id that we get from the API
+
+              store.player_id = res.PlayerID;
             }).catch(function (err) {
               return console.log("Problem with createRace request::", err);
-            }));
+            });
 
-          case 12:
+          case 6:
+            // TODO - update the store with the race id
+            // render starting UI
+            renderAt('#race', renderRaceStartView(store.track_id)); // The race has been created, now start the countdown
+            // TODO - call the async function runCountdown
+
+            _context4.next = 9;
+            return runCountdown();
+
+          case 9:
             // TODO - call the async function startRace
             console.log('Running startRace() function');
-            _context4.next = 15;
+            _context4.next = 12;
             return startRace(store.race_id);
 
-          case 15:
+          case 12:
             // TODO - call the async function runRace
             console.log('Running runRace() function');
-            _context4.next = 18;
+            _context4.next = 15;
             return runRace(store.race_id);
 
-          case 18:
+          case 15:
           case "end":
             return _context4.stop();
         }
@@ -11252,48 +11266,33 @@ function startRace(_x2) {
 
 function _startRace() {
   _startRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(id) {
-    var raceData, race;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
-            console.log('Starting race!');
+            console.log('BEGIN - Starting race!');
             _context7.next = 3;
-            return fetch("".concat(SERVER, "/api/races/").concat(id, "/start"), {
-              method: 'POST',
-              // Other options: PUT, PATCH, DELETE
-              mode: 'cors',
-              // Other options are: 'no-cors', 'same-origin', and the default: 'cors'
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(raceData) // body data type must match "Content-Type" header
-
-            }).then(function (response) {
-              return response.json();
-            }).catch(function (error) {
+            return fetch("".concat(SERVER, "/api/races/").concat(id, "/start"), _objectSpread({
+              method: 'POST'
+            }, defaultFetchOpts())).catch(function (error) {
               return console.log("Problem with startRace request::", error);
             });
 
           case 3:
-            console.log('Debug after start race!');
-            raceData = {
-              "track": store.track_id,
-              "player_id": store.player_id
-            };
+            console.log('END - Starting race!');
+            console.log("BEGIN - ".concat(SERVER, "/api/races/").concat(id));
             _context7.next = 7;
             return fetch("".concat(SERVER, "/api/races/").concat(id)).then(function (response) {
-              return response.json();
+              console.log("Info for request: ".concat(SERVER, "/api/races/").concat(id));
+              console.log(response.json());
             }).catch(function (error) {
               return console.log(error);
             });
 
           case 7:
-            race = _context7.sent;
-            console.log(race);
-            console.log(id);
+            console.log("END - ".concat(SERVER, "/api/races/").concat(id));
 
-          case 10:
+          case 8:
           case "end":
             return _context7.stop();
         }
