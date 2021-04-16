@@ -10841,8 +10841,6 @@ function setupClickHandlers() {
 
     if (target.matches('#submit-create-race')) {
       event.preventDefault();
-      console.log('Debug: Create race has been triggered.'); // start race
-
       handleCreateRace();
     } // Handle acceleration click
 
@@ -11050,32 +11048,24 @@ function _runCountdown() {
 }
 
 function handleSelectPodRacer(target) {
-  console.log("selected a pod", target.id); // remove class selected from all racer options
-
   var selected = document.querySelector('#racers .selected');
 
   if (selected) {
     selected.classList.remove('selected');
-  } // add class selected to current target
+  }
 
-
-  target.classList.add('selected'); // [DONE] TODO - save the selected racer to the store
-
+  target.classList.add('selected');
   store.player_id = target.id;
 }
 
 function handleSelectTrack(target) {
-  console.log("selected a track", target.id); // remove class selected from all track options
-
   var selected = document.querySelector('#tracks .selected');
 
   if (selected) {
     selected.classList.remove('selected');
-  } // add class selected to current target
+  }
 
-
-  target.classList.add('selected'); // [DONE] TODO - save the selected track id to the store
-
+  target.classList.add('selected');
   store.track_id = target.id;
 } // HTML VIEWS ------------------------------------------------
 // Provided code - do not remove
@@ -11141,7 +11131,7 @@ function raceProgress(positions) {
   var results = positions.map(function (p) {
     return "\n\t\t\t<tr>\n\t\t\t\t<td>\n\t\t\t\t\t<h3>".concat(count++, " - ").concat(p.driver_name, "</h3>\n\t\t\t\t</td>\n\t\t\t</tr>\n\t\t");
   });
-  return "\n\t\t<main>\n\t\t\t<h3>Leaderboard</h3>\n\t\t\t<section id=\"leaderBoard\">\n\t\t\t\t".concat(results, "\n\t\t\t</section>\n\t\t</main>\n\t");
+  return "\n\t\t<main>\n\t\t\t<h3>Leaderboard</h3>\n\t\t\t<section id=\"leaderBoard\">\n\t\t\t\t".concat(results.join(' '), "\n\t\t\t</section>\n\t\t</main>\n\t");
 }
 
 function renderAt(element, html) {
@@ -11197,12 +11187,9 @@ function createRace(player_id, track_id) {
   })).then(function (res) {
     return res.json();
   }).then(function (res) {
-    console.log("Then response from: ".concat(SERVER, "/api/races"));
-    console.log(res);
     store.race_id = parseInt(res.ID) - 1; //here to store the race_id that we get from the API
 
     store.player_id = res.PlayerID;
-    console.log('Finished race creation.');
   }).catch(function (err) {
     return console.log("Problem with createRace request::", err);
   });

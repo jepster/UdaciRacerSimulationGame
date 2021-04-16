@@ -49,8 +49,7 @@ function setupClickHandlers() {
 		// Submit create race form
 		if (target.matches('#submit-create-race')) {
 			event.preventDefault()
-			console.log('Debug: Create race has been triggered.');
-			// start race
+
 			handleCreateRace()
 		}
 
@@ -148,34 +147,24 @@ async function runCountdown() {
 }
 
 function handleSelectPodRacer(target) {
-	console.log("selected a pod", target.id)
-
-	// remove class selected from all racer options
 	const selected = document.querySelector('#racers .selected')
 	if(selected) {
 		selected.classList.remove('selected')
 	}
 
-	// add class selected to current target
 	target.classList.add('selected')
 
-	// [DONE] TODO - save the selected racer to the store
 	store.player_id = target.id;
 }
 
 function handleSelectTrack(target) {
-	console.log("selected a track", target.id)
-
-	// remove class selected from all track options
 	const selected = document.querySelector('#tracks .selected')
 	if(selected) {
 		selected.classList.remove('selected')
 	}
 
-	// add class selected to current target
 	target.classList.add('selected')
 
-	// [DONE] TODO - save the selected track id to the store
 	store.track_id = target.id;
 }
 
@@ -302,7 +291,7 @@ function raceProgress(positions) {
 		<main>
 			<h3>Leaderboard</h3>
 			<section id="leaderBoard">
-				${results}
+				${results.join(' ')}
 			</section>
 		</main>
 	`
@@ -360,11 +349,8 @@ function createRace(player_id, track_id) {
 	})
 		.then((res) => res.json())
 		.then((res) => {
-			console.log(`Then response from: ${SERVER}/api/races`);
-			console.log(res);
 			store.race_id = parseInt(res.ID) - 1; //here to store the race_id that we get from the API
 			store.player_id = res.PlayerID;
-			console.log('Finished race creation.');
 		})
 		.catch((err) => console.log("Problem with createRace request::", err));
 }
