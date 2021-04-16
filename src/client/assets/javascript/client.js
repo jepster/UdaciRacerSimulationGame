@@ -116,11 +116,11 @@ function runRace(raceID) {
 				console.log(infoSingleRace);
 
 				// TODO - if the race info status property is "in-progress", update the leaderboard by calling:
-				if (infoSingleRace.Results.status === 'in-progress') {
+				if (infoSingleRace.status === 'in-progress') {
 					renderAt('#leaderBoard', raceProgress(infoSingleRace.positions))
 				}
 
-				if (infoSingleRace.Results.status === 'finished') {
+				if (infoSingleRace.status === 'finished') {
 					renderAt('#race', resultsView(infoSingleRace.positions)) // to render the results view
 				}
 			}
