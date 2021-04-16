@@ -96,46 +96,39 @@ async function handleCreateRace() {
 	await runRace(store.race_id);
 }
 
-function runRace(raceID) {
+async function runRace(raceID) {
 	try {
-		let infoSingleRace = {};
 
-			// TODO - use Javascript's built in setInterval method to get race info every 500ms
-			const raceInfo = async () => {
-				const raceData = {
-					"track": store.track_id,
-					"player_id": store.player_id
-				};
+		return new Promise(resolve => {
+			// TODO - use Javascript's built in setInterval method to get race info twice a second
+			const raceInterval = setInterval(async() => {
+				let res = await getRace(raceID)
+				console.log(res)
+				/*
+				TODO - if the race info status property is "in-progress", update the leaderboard by calling:
 
-				console.log('DEBUG - Regular race info: ');
-				const infoSingleRace = await fetch(`${SERVER}/api/races/${raceID}`)
-					.then(response => response.json())
-					.catch(error => console.log(error));
-
-				console.log('The race info: ');
-				console.log(infoSingleRace);
-
-				// TODO - if the race info status property is "in-progress", update the leaderboard by calling:
-				if (infoSingleRace.status === 'in-progress') {
-					renderAt('#leaderBoard', raceProgress(infoSingleRace.positions))
+				renderAt('#leaderBoard', raceProgress(res.positions))
+				*/
+				if (res.status === "in-progress") {
+					renderAt('#leaderBoard', raceProgress(res.positions))
 				}
+				/*
+					TODO - if the race info status property is "finished", run the following:
 
-				if (infoSingleRace.status === 'finished') {
-					renderAt('#race', resultsView(infoSingleRace.positions)) // to render the results view
+					clearInterval(raceInterval) // to stop the interval from repeating
+					renderAt('#race', resultsView(res.positions)) // to render the results view
+					reslove(res) // resolve the promise
+				*/
+				if (res.status === "finished") {
+					clearInterval(raceInterval) // to stop the interval from repeating
+					renderAt('#race', resultsView(res.positions)) // to render the results view
+					resolve(res) // resolve the promise
 				}
-			}
-
-			const raceInterval = setInterval(raceInfo, 500);
-
-			// TODO - if the race info status property is "finished", run the following:
-			if (infoSingleRace.Results.status === 'finished') {
-				clearInterval(raceInterval); // to stop the interval from repeating
-			}
-
-			resolve(infoSingleRace); // resolve the promise
-		// remember to add error handling for the Promise
-	} catch(error) {
-		console.log(error);
+			}, 500)
+		})
+	} catch (error) {
+		console.error(error);
+		return error;
 	}
 }
 
@@ -187,7 +180,7 @@ function handleSelectPodRacer(target) {
 	target.classList.add('selected')
 
 	// [DONE] TODO - save the selected racer to the store
-	store.race_id = target.id;
+	store.player_id = target.id;
 }
 
 function handleSelectTrack(target) {
@@ -407,8 +400,10 @@ async function createRace(player_id, track_id) {
 		.catch((err) => console.log("Problem with createRace request::", err));
 }
 
-function getRace(id) {
+async function getRace(id) {
 	// GET request to `${SERVER}/api/races/${id}`
+	let resp = await fetch(`${SERVER}/api/races/${id}`)
+	return resp.json();
 }
 
 async function startRace(id) {

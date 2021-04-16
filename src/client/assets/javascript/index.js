@@ -10796,10 +10796,10 @@ function onPageLoad() {
 }
 
 function _onPageLoad() {
-  _onPageLoad = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+  _onPageLoad = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context.prev = _context.next) {
           case 0:
             try {
               getTracks().then(function (tracks) {
@@ -10817,10 +10817,10 @@ function _onPageLoad() {
 
           case 1:
           case "end":
-            return _context2.stop();
+            return _context.stop();
         }
       }
-    }, _callee2);
+    }, _callee);
   }));
   return _onPageLoad.apply(this, arguments);
 }
@@ -10860,32 +10860,32 @@ function delay(_x) {
 
 
 function _delay() {
-  _delay = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(ms) {
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+  _delay = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(ms) {
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            _context3.prev = 0;
-            _context3.next = 3;
+            _context2.prev = 0;
+            _context2.next = 3;
             return new Promise(function (resolve) {
               return setTimeout(resolve, ms);
             });
 
           case 3:
-            return _context3.abrupt("return", _context3.sent);
+            return _context2.abrupt("return", _context2.sent);
 
           case 6:
-            _context3.prev = 6;
-            _context3.t0 = _context3["catch"](0);
+            _context2.prev = 6;
+            _context2.t0 = _context2["catch"](0);
             console.log("an error shouldn't be possible here");
-            console.log(_context3.t0);
+            console.log(_context2.t0);
 
           case 10:
           case "end":
-            return _context3.stop();
+            return _context2.stop();
         }
       }
-    }, _callee3, null, [[0, 6]]);
+    }, _callee2, null, [[0, 6]]);
   }));
   return _delay.apply(this, arguments);
 }
@@ -10895,12 +10895,12 @@ function handleCreateRace() {
 }
 
 function _handleCreateRace() {
-  _handleCreateRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+  _handleCreateRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context4.prev = _context4.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
-            _context4.next = 2;
+            _context3.next = 2;
             return createRace(store.player_id, store.track_id);
 
           case 2:
@@ -10908,91 +10908,103 @@ function _handleCreateRace() {
             renderAt('#race', renderRaceStartView(store.track_id)); // The race has been created, now start the countdown
             // TODO - call the async function runCountdown
 
-            _context4.next = 5;
+            _context3.next = 5;
             return runCountdown();
 
           case 5:
             // TODO - call the async function startRace
             console.log('Running startRace() function');
-            _context4.next = 8;
+            _context3.next = 8;
             return startRace(store.race_id);
 
           case 8:
             // TODO - call the async function runRace
             console.log('Running runRace() function');
-            _context4.next = 11;
+            _context3.next = 11;
             return runRace(store.race_id);
 
           case 11:
           case "end":
-            return _context4.stop();
+            return _context3.stop();
         }
       }
-    }, _callee4);
+    }, _callee3);
   }));
   return _handleCreateRace.apply(this, arguments);
 }
 
-function runRace(raceID) {
-  try {
-    var infoSingleRace = {}; // TODO - use Javascript's built in setInterval method to get race info every 500ms
+function runRace(_x2) {
+  return _runRace.apply(this, arguments);
+}
 
-    var raceInfo = /*#__PURE__*/function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-        var raceData, infoSingleRace;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                raceData = {
-                  "track": store.track_id,
-                  "player_id": store.player_id
-                };
-                console.log('DEBUG - Regular race info: ');
-                _context.next = 4;
-                return fetch("".concat(SERVER, "/api/races/").concat(raceID)).then(function (response) {
-                  return response.json();
-                }).catch(function (error) {
-                  return console.log(error);
-                });
+function _runRace() {
+  _runRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(raceID) {
+    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.prev = 0;
+            return _context5.abrupt("return", new Promise(function (resolve) {
+              // TODO - use Javascript's built in setInterval method to get race info twice a second
+              var raceInterval = setInterval( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+                var res;
+                return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                  while (1) {
+                    switch (_context4.prev = _context4.next) {
+                      case 0:
+                        _context4.next = 2;
+                        return getRace(raceID);
 
-              case 4:
-                infoSingleRace = _context.sent;
-                console.log('The race info: ');
-                console.log(infoSingleRace); // TODO - if the race info status property is "in-progress", update the leaderboard by calling:
+                      case 2:
+                        res = _context4.sent;
+                        console.log(res);
+                        /*
+                        TODO - if the race info status property is "in-progress", update the leaderboard by calling:
+                        	renderAt('#leaderBoard', raceProgress(res.positions))
+                        */
 
-                if (infoSingleRace.status === 'in-progress') {
-                  renderAt('#leaderBoard', raceProgress(infoSingleRace.positions));
-                }
+                        if (res.status === "in-progress") {
+                          renderAt('#leaderBoard', raceProgress(res.positions));
+                        }
+                        /*
+                        	TODO - if the race info status property is "finished", run the following:
+                        		clearInterval(raceInterval) // to stop the interval from repeating
+                        	renderAt('#race', resultsView(res.positions)) // to render the results view
+                        	reslove(res) // resolve the promise
+                        */
 
-                if (infoSingleRace.status === 'finished') {
-                  renderAt('#race', resultsView(infoSingleRace.positions)); // to render the results view
-                }
 
-              case 9:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }));
+                        if (res.status === "finished") {
+                          clearInterval(raceInterval); // to stop the interval from repeating
 
-      return function raceInfo() {
-        return _ref.apply(this, arguments);
-      };
-    }();
+                          renderAt('#race', resultsView(res.positions)); // to render the results view
 
-    var raceInterval = setInterval(raceInfo, 500); // TODO - if the race info status property is "finished", run the following:
+                          resolve(res); // resolve the promise
+                        }
 
-    if (infoSingleRace.Results.status === 'finished') {
-      clearInterval(raceInterval); // to stop the interval from repeating
-    }
+                      case 6:
+                      case "end":
+                        return _context4.stop();
+                    }
+                  }
+                }, _callee4);
+              })), 500);
+            }));
 
-    resolve(infoSingleRace); // resolve the promise
-    // remember to add error handling for the Promise
-  } catch (error) {
-    console.log(error);
-  }
+          case 4:
+            _context5.prev = 4;
+            _context5.t0 = _context5["catch"](0);
+            console.error(_context5.t0);
+            return _context5.abrupt("return", _context5.t0);
+
+          case 8:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5, null, [[0, 4]]);
+  }));
+  return _runRace.apply(this, arguments);
 }
 
 function runCountdown() {
@@ -11000,19 +11012,19 @@ function runCountdown() {
 }
 
 function _runCountdown() {
-  _runCountdown = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+  _runCountdown = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
     var timer;
-    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+    return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
-        switch (_context5.prev = _context5.next) {
+        switch (_context6.prev = _context6.next) {
           case 0:
-            _context5.prev = 0;
-            _context5.next = 3;
+            _context6.prev = 0;
+            _context6.next = 3;
             return delay(1000);
 
           case 3:
             timer = 3;
-            return _context5.abrupt("return", new Promise(function (resolve) {
+            return _context6.abrupt("return", new Promise(function (resolve) {
               // Done TODO - use Javascript's built in setInterval method to count down once per second
               var countDown = function countDown() {
                 // run this DOM manipulation to decrement the countdown for the user
@@ -11032,16 +11044,16 @@ function _runCountdown() {
             }));
 
           case 7:
-            _context5.prev = 7;
-            _context5.t0 = _context5["catch"](0);
-            console.log(_context5.t0);
+            _context6.prev = 7;
+            _context6.t0 = _context6["catch"](0);
+            console.log(_context6.t0);
 
           case 10:
           case "end":
-            return _context5.stop();
+            return _context6.stop();
         }
       }
-    }, _callee5, null, [[0, 7]]);
+    }, _callee6, null, [[0, 7]]);
   }));
   return _runCountdown.apply(this, arguments);
 }
@@ -11058,7 +11070,7 @@ function handleSelectPodRacer(target) {
 
   target.classList.add('selected'); // [DONE] TODO - save the selected racer to the store
 
-  store.race_id = target.id;
+  store.player_id = target.id;
 }
 
 function handleSelectTrack(target) {
@@ -11083,10 +11095,10 @@ function handleAccelerate() {
 
 
 function _handleAccelerate() {
-  _handleAccelerate = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
-    return regeneratorRuntime.wrap(function _callee6$(_context6) {
+  _handleAccelerate = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+    return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
-        switch (_context6.prev = _context6.next) {
+        switch (_context7.prev = _context7.next) {
           case 0:
             console.log("accelerate button clicked"); // TODO - Invoke the API call to accelerate
 
@@ -11098,10 +11110,10 @@ function _handleAccelerate() {
 
           case 2:
           case "end":
-            return _context6.stop();
+            return _context7.stop();
         }
       }
-    }, _callee6);
+    }, _callee7);
   }));
   return _handleAccelerate.apply(this, arguments);
 }
@@ -11209,16 +11221,16 @@ function getRacers() {
   });
 }
 
-function createRace(_x2, _x3) {
+function createRace(_x3, _x4) {
   return _createRace.apply(this, arguments);
 }
 
 function _createRace() {
-  _createRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(player_id, track_id) {
+  _createRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(player_id, track_id) {
     var body;
-    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context7.prev = _context7.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
             player_id = parseInt(player_id);
             track_id = parseInt(track_id);
@@ -11226,7 +11238,7 @@ function _createRace() {
               player_id: player_id,
               track_id: track_id
             };
-            _context7.next = 5;
+            _context8.next = 5;
             return fetch("".concat(SERVER, "/api/races"), _objectSpread(_objectSpread({
               method: "POST"
             }, defaultFetchOpts()), {}, {
@@ -11247,29 +11259,54 @@ function _createRace() {
 
           case 5:
           case "end":
-            return _context7.stop();
+            return _context8.stop();
         }
       }
-    }, _callee7);
+    }, _callee8);
   }));
   return _createRace.apply(this, arguments);
 }
 
-function getRace(id) {// GET request to `${SERVER}/api/races/${id}`
+function getRace(_x5) {
+  return _getRace.apply(this, arguments);
 }
 
-function startRace(_x4) {
+function _getRace() {
+  _getRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(id) {
+    var resp;
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            _context9.next = 2;
+            return fetch("".concat(SERVER, "/api/races/").concat(id));
+
+          case 2:
+            resp = _context9.sent;
+            return _context9.abrupt("return", resp.json());
+
+          case 4:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9);
+  }));
+  return _getRace.apply(this, arguments);
+}
+
+function startRace(_x6) {
   return _startRace.apply(this, arguments);
 }
 
 function _startRace() {
-  _startRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(id) {
-    return regeneratorRuntime.wrap(function _callee8$(_context8) {
+  _startRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(id) {
+    return regeneratorRuntime.wrap(function _callee10$(_context10) {
       while (1) {
-        switch (_context8.prev = _context8.next) {
+        switch (_context10.prev = _context10.next) {
           case 0:
             console.log('BEGIN - Starting race!');
-            _context8.next = 3;
+            _context10.next = 3;
             return fetch("".concat(SERVER, "/api/races/").concat(id, "/start"), _objectSpread({
               method: 'POST'
             }, defaultFetchOpts())).catch(function (error) {
@@ -11279,7 +11316,7 @@ function _startRace() {
           case 3:
             console.log('END - Starting race!');
             console.log("BEGIN - ".concat(SERVER, "/api/races/").concat(id));
-            _context8.next = 7;
+            _context10.next = 7;
             return fetch("".concat(SERVER, "/api/races/").concat(id)).then(function (response) {
               console.log("Info for request: ".concat(SERVER, "/api/races/").concat(id));
               console.log(response.json());
@@ -11292,10 +11329,10 @@ function _startRace() {
 
           case 8:
           case "end":
-            return _context8.stop();
+            return _context10.stop();
         }
       }
-    }, _callee8);
+    }, _callee10);
   }));
   return _startRace.apply(this, arguments);
 }
