@@ -10848,7 +10848,7 @@ function setupClickHandlers() {
 
 
     if (target.matches('#gas-peddle')) {
-      handleAccelerate(target);
+      accelerate(target);
     }
   }, false);
 }
@@ -10900,35 +10900,38 @@ function _handleCreateRace() {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            _context3.next = 2;
+            _context3.prev = 0;
+            _context3.next = 3;
             return createRace(store.player_id, store.track_id);
 
-          case 2:
-            // render starting UI
-            renderAt('#race', renderRaceStartView(store.track_id)); // The race has been created, now start the countdown
-            // TODO - call the async function runCountdown
-
-            _context3.next = 5;
+          case 3:
+            renderAt('#race', renderRaceStartView(store.track_id));
+            _context3.next = 6;
             return runCountdown();
 
-          case 5:
-            // TODO - call the async function startRace
-            console.log('Running startRace() function');
+          case 6:
             _context3.next = 8;
             return startRace(store.race_id);
 
           case 8:
-            // TODO - call the async function runRace
-            console.log('Running runRace() function');
-            _context3.next = 11;
+            _context3.next = 10;
             return runRace(store.race_id);
 
-          case 11:
+          case 10:
+            _context3.next = 15;
+            break;
+
+          case 12:
+            _context3.prev = 12;
+            _context3.t0 = _context3["catch"](0);
+            console.error(_context3.t0);
+
+          case 15:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3);
+    }, _callee3, null, [[0, 12]]);
   }));
   return _handleCreateRace.apply(this, arguments);
 }
@@ -10957,22 +10960,10 @@ function _runRace() {
 
                       case 2:
                         res = _context4.sent;
-                        console.log(res);
-                        /*
-                        TODO - if the race info status property is "in-progress", update the leaderboard by calling:
-                        	renderAt('#leaderBoard', raceProgress(res.positions))
-                        */
 
                         if (res.status === "in-progress") {
                           renderAt('#leaderBoard', raceProgress(res.positions));
                         }
-                        /*
-                        	TODO - if the race info status property is "finished", run the following:
-                        		clearInterval(raceInterval) // to stop the interval from repeating
-                        	renderAt('#race', resultsView(res.positions)) // to render the results view
-                        	reslove(res) // resolve the promise
-                        */
-
 
                         if (res.status === "finished") {
                           clearInterval(raceInterval); // to stop the interval from repeating
@@ -10982,7 +10973,7 @@ function _runRace() {
                           resolve(res); // resolve the promise
                         }
 
-                      case 6:
+                      case 5:
                       case "end":
                         return _context4.stop();
                     }
@@ -11030,11 +11021,11 @@ function _runCountdown() {
                 // run this DOM manipulation to decrement the countdown for the user
                 document.getElementById('big-numbers').innerHTML = --timer;
 
-                if (timer >= 0) {
+                if (timer > 0) {
                   --timer;
                 }
 
-                if (timer <= 0) {
+                if (timer === 0) {
                   clearInterval(countDownInterval);
                   return resolve();
                 }
@@ -11086,37 +11077,9 @@ function handleSelectTrack(target) {
   target.classList.add('selected'); // [DONE] TODO - save the selected track id to the store
 
   store.track_id = target.id;
-}
-
-function handleAccelerate() {
-  return _handleAccelerate.apply(this, arguments);
 } // HTML VIEWS ------------------------------------------------
 // Provided code - do not remove
 
-
-function _handleAccelerate() {
-  _handleAccelerate = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-    return regeneratorRuntime.wrap(function _callee7$(_context7) {
-      while (1) {
-        switch (_context7.prev = _context7.next) {
-          case 0:
-            console.log("accelerate button clicked"); // TODO - Invoke the API call to accelerate
-
-            fetch("".concat(SERVER, "/api/races/").concat(store.race_id, "/accelerate"), _objectSpread({
-              method: 'POST'
-            }, defaultFetchOpts())).catch(function (err) {
-              return console.log("Problem with accelerate request::", err);
-            });
-
-          case 2:
-          case "end":
-            return _context7.stop();
-        }
-      }
-    }, _callee7);
-  }));
-  return _handleAccelerate.apply(this, arguments);
-}
 
 function renderRacerCars(racers) {
   if (!racers.length) {
@@ -11169,10 +11132,8 @@ function resultsView(positions) {
 }
 
 function raceProgress(positions) {
-  var userPlayer = positions.find(function (e) {
-    return e.id === store.player_id;
-  });
-  userPlayer.driver_name += " (you)";
+  // let userPlayer = positions.find(e => e.id === store.player_id)
+  // userPlayer.driver_name += " (you)"
   positions = positions.sort(function (a, b) {
     return a.segment > b.segment ? -1 : 1;
   });
@@ -11221,92 +11182,72 @@ function getRacers() {
   });
 }
 
-function createRace(_x3, _x4) {
-  return _createRace.apply(this, arguments);
+function createRace(player_id, track_id) {
+  player_id = parseInt(player_id);
+  track_id = parseInt(track_id);
+  var body = {
+    player_id: player_id,
+    track_id: track_id
+  };
+  fetch("".concat(SERVER, "/api/races"), _objectSpread(_objectSpread({
+    method: "POST"
+  }, defaultFetchOpts()), {}, {
+    dataType: "jsonp",
+    body: JSON.stringify(body)
+  })).then(function (res) {
+    return res.json();
+  }).then(function (res) {
+    console.log("Then response from: ".concat(SERVER, "/api/races"));
+    console.log(res);
+    store.race_id = parseInt(res.ID) - 1; //here to store the race_id that we get from the API
+
+    store.player_id = res.PlayerID;
+    console.log('Finished race creation.');
+  }).catch(function (err) {
+    return console.log("Problem with createRace request::", err);
+  });
 }
 
-function _createRace() {
-  _createRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(player_id, track_id) {
-    var body;
-    return regeneratorRuntime.wrap(function _callee8$(_context8) {
-      while (1) {
-        switch (_context8.prev = _context8.next) {
-          case 0:
-            player_id = parseInt(player_id);
-            track_id = parseInt(track_id);
-            body = {
-              player_id: player_id,
-              track_id: track_id
-            };
-            _context8.next = 5;
-            return fetch("".concat(SERVER, "/api/races"), _objectSpread(_objectSpread({
-              method: "POST"
-            }, defaultFetchOpts()), {}, {
-              dataType: "jsonp",
-              body: JSON.stringify(body)
-            })).then(function (res) {
-              return res.json();
-            }).then(function (res) {
-              console.log("Then response from: ".concat(SERVER, "/api/races"));
-              console.log(res);
-              store.race_id = parseInt(res.ID) - 1; //here to store the race_id that we get from the API
-
-              store.player_id = res.PlayerID;
-              console.log('Finished race creation.');
-            }).catch(function (err) {
-              return console.log("Problem with createRace request::", err);
-            });
-
-          case 5:
-          case "end":
-            return _context8.stop();
-        }
-      }
-    }, _callee8);
-  }));
-  return _createRace.apply(this, arguments);
-}
-
-function getRace(_x5) {
+function getRace(_x3) {
   return _getRace.apply(this, arguments);
 }
 
 function _getRace() {
-  _getRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(id) {
+  _getRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(id) {
     var resp;
-    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+    return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
-        switch (_context9.prev = _context9.next) {
+        switch (_context7.prev = _context7.next) {
           case 0:
-            _context9.next = 2;
+            _context7.next = 2;
             return fetch("".concat(SERVER, "/api/races/").concat(id));
 
           case 2:
-            resp = _context9.sent;
-            return _context9.abrupt("return", resp.json());
+            resp = _context7.sent;
+            return _context7.abrupt("return", resp.json());
 
           case 4:
           case "end":
-            return _context9.stop();
+            return _context7.stop();
         }
       }
-    }, _callee9);
+    }, _callee7);
   }));
   return _getRace.apply(this, arguments);
 }
 
-function startRace(_x6) {
+function startRace(_x4) {
   return _startRace.apply(this, arguments);
 }
 
 function _startRace() {
-  _startRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(id) {
-    return regeneratorRuntime.wrap(function _callee10$(_context10) {
+  _startRace = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(id) {
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context10.prev = _context10.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
-            console.log('BEGIN - Starting race!');
-            _context10.next = 3;
+            _context8.prev = 0;
+            _context8.next = 3;
             return fetch("".concat(SERVER, "/api/races/").concat(id, "/start"), _objectSpread({
               method: 'POST'
             }, defaultFetchOpts())).catch(function (error) {
@@ -11314,32 +11255,48 @@ function _startRace() {
             });
 
           case 3:
-            console.log('END - Starting race!');
-            console.log("BEGIN - ".concat(SERVER, "/api/races/").concat(id));
-            _context10.next = 7;
-            return fetch("".concat(SERVER, "/api/races/").concat(id)).then(function (response) {
-              console.log("Info for request: ".concat(SERVER, "/api/races/").concat(id));
-              console.log(response.json());
-            }).catch(function (error) {
-              return console.log(error);
-            });
+            _context8.next = 8;
+            break;
 
-          case 7:
-            console.log("END - ".concat(SERVER, "/api/races/").concat(id));
+          case 5:
+            _context8.prev = 5;
+            _context8.t0 = _context8["catch"](0);
+            console.log(_context8.t0);
 
           case 8:
           case "end":
-            return _context10.stop();
+            return _context8.stop();
         }
       }
-    }, _callee10);
+    }, _callee8, null, [[0, 5]]);
   }));
   return _startRace.apply(this, arguments);
 }
 
-function accelerate(id) {// POST request to `${SERVER}/api/races/${id}/accelerate`
-  // options parameter provided as defaultFetchOpts
-  // no body or datatype needed for this request
+function accelerate() {
+  return _accelerate.apply(this, arguments);
+}
+
+function _accelerate() {
+  _accelerate = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            fetch("".concat(SERVER, "/api/races/").concat(store.race_id, "/accelerate"), _objectSpread({
+              method: 'POST'
+            }, defaultFetchOpts())).catch(function (err) {
+              return console.log("Problem with accelerate request::", err);
+            });
+
+          case 1:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9);
+  }));
+  return _accelerate.apply(this, arguments);
 }
 })();
 
